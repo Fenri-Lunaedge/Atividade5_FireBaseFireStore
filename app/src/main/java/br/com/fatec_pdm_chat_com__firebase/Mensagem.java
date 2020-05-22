@@ -1,5 +1,6 @@
 package br.com.fatec_pdm_chat_com__firebase;
 
+import java.util.Collections;
 import java.util.Date;
 
 public class Mensagem implements Comparable <Mensagem>{
@@ -10,6 +11,9 @@ public class Mensagem implements Comparable <Mensagem>{
     public int compareTo(Mensagem o){
         return this.date.compareTo(o.date);
     }
+
+
+    public Mensagem(){}
 
     public Mensagem(String usuario, Date date, String texto) {
         this.usuario = usuario;

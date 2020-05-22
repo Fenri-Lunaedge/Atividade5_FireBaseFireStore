@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 public class NovoUsuarioActivity extends AppCompatActivity {
     private EditText loginNovoUsuarioEditText;
     private EditText senhaNovoUsuarioEditText;
@@ -14,6 +16,7 @@ public class NovoUsuarioActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_novo_usuario);
+        setTitle("Sign Up");
         loginNovoUsuarioEditText = findViewById(R.id.loginNovoUsuarioEditText);
         senhaNovoUsuarioEditText = findViewById(R.id.senhaNovoUsuarioEditText);
         firebaseAuth = FirebaseAuth.getInstance();
@@ -30,4 +33,7 @@ public class NovoUsuarioActivity extends AppCompatActivity {
             finish();
         });
     }
+
+
+
 }

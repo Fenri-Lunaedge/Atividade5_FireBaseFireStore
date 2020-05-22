@@ -6,9 +6,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -16,15 +19,25 @@ public class MainActivity extends AppCompatActivity {
     private EditText senhaEditText;
     private FirebaseAuth firebaseAuth;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         loginEditText = findViewById(R.id.loginEditText);
         senhaEditText = findViewById(R.id.senhaEditText);
-
         firebaseAuth = FirebaseAuth.getInstance();
+        setTitle("Sign In");
     }
+
+    protected void onResume() {
+        super.onResume();
+        loginEditText.setText("");
+        senhaEditText.setText("");
+
+    }
+
+
 
     public void irParaCadastro (View view){
         startActivity(new Intent(this, NovoUsuarioActivity.class));
@@ -41,8 +54,8 @@ public class MainActivity extends AppCompatActivity {
                     this,
                     getString(R.string.login_sucesso),
                     Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this, ChatActivity.class);
-            startActivity(intent);
+
+            startActivity(new Intent(this, Temas.class));
 
         }).addOnFailureListener((error) -> {
             Toast.makeText(
@@ -51,5 +64,6 @@ public class MainActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
         });
     }
+
 }
 

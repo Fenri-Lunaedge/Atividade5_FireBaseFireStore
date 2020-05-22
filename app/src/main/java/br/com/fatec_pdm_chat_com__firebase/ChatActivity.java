@@ -1,17 +1,19 @@
 package br.com.fatec_pdm_chat_com__firebase;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.DateSorter;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -19,19 +21,16 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
 
-import org.w3c.dom.Text;
-
+import java.util.Comparator;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-class ChatActivity extends AppCompatActivity {
+public class ChatActivity extends AppCompatActivity {
 
     private RecyclerView mensagensRecyclerView;
     private ChatAdapter adapter;
@@ -39,11 +38,19 @@ class ChatActivity extends AppCompatActivity {
     private EditText mensagemEditText;
     private FirebaseUser fireUser;
     private CollectionReference mMsgsReference;
+    private String room_name;
+    FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
+                .setTimestampsInSnapshotsEnabled(true)
+                .build();
+        firestore.setFirestoreSettings(settings);
         mensagensRecyclerView = findViewById(R.id.mensagensRecyclerView);
         mensagens = new ArrayList< >();
         adapter = new ChatAdapter(mensagens, this);
@@ -52,28 +59,48 @@ class ChatActivity extends AppCompatActivity {
         linearLayoutManager.setReverseLayout(true);
         mensagensRecyclerView.setLayoutManager(linearLayoutManager);
         mensagemEditText = findViewById(R.id.mensagemEditText);
+        room_name = getIntent().getExtras().get("room_name").toString();
+        setTitle(room_name);
+
+        if(getSupportActionBar()!=null)
+        {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == android.R.id.home)
+            finish();
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void setupFirebase (){
         fireUser = FirebaseAuth.getInstance().getCurrentUser();
-        mMsgsReference =
-                FirebaseFirestore.getInstance().collection("mensagens");
-        getRemoteMsgs();
+
+            mMsgsReference =
+                    firestore.collection("Salas").document(room_name).collection("mensagens");
+
+            getRemoteMsgs();
+
     }
 
     private void getRemoteMsgs() {
-        mMsgsReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                mensagens.clear();
-                for (DocumentSnapshot doc:
-                        queryDocumentSnapshots.getDocuments()) {
-                    Mensagem incomingMsg = doc.toObject(Mensagem.class);
-                    mensagens.add(incomingMsg);
-                }
-                Collections.sort(mensagens);
-                adapter.notifyDataSetChanged();
+
+        mMsgsReference.addSnapshotListener((queryDocumentSnapshots, e) -> {
+            mensagens.clear();
+            for (DocumentSnapshot doc:
+                    queryDocumentSnapshots.getDocuments()) {
+                Mensagem incomingMsg = doc.toObject(Mensagem.class);
+                mensagens.add(incomingMsg);
             }
+            Collections.sort(mensagens, Collections.reverseOrder());
+
+            adapter.notifyDataSetChanged();
         });
     }
     @Override
@@ -87,8 +114,10 @@ class ChatActivity extends AppCompatActivity {
         String mensagem = mensagemEditText.getText().toString();
         Mensagem m = new Mensagem (fireUser.getEmail(), new Date(),
                 mensagem);
+
         esconderTeclado(view);
         mMsgsReference.add(m);
+
 
     }
 
@@ -110,34 +139,34 @@ class ChatViewHolder extends RecyclerView.ViewHolder{
     }
 }
 
-class ChatAdapter extends RecyclerView.Adapter <ChatViewHolder>{
-    private List <Mensagem> mensagens;
-    private Context context;
-    ChatAdapter(List <Mensagem> mensagens, Context context){
-        this.mensagens = mensagens;
-        this.context = context;
-    }
+    class ChatAdapter extends RecyclerView.Adapter <ChatViewHolder>{
+        private List <Mensagem> mensagens;
+        private Context context;
+        ChatAdapter(List <Mensagem> mensagens, Context context){
+            this.mensagens = mensagens;
+            this.context = context;
+        }
 
-    @NonNull
-    @Override
-    public ChatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View raiz = inflater.inflate(R.layout.list_item, parent, false);
-        return new ChatViewHolder (raiz);
-    }
+        @NonNull
+        @Override
+        public ChatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            LayoutInflater inflater = LayoutInflater.from(context);
+            View raiz = inflater.inflate(R.layout.list_item, parent, false);
+            return new ChatViewHolder (raiz);
+        }
 
-    @Override
-    public void onBindViewHolder(@NonNull ChatViewHolder holder,
-                                 int position) {
-        Mensagem m = mensagens.get(position);
+        @Override
+        public void onBindViewHolder(@NonNull ChatViewHolder holder,
+                                     int position) {
+            Mensagem m = mensagens.get(position);
 
-        holder.dataNomeTextView.setText(context.getString(R.string.data_nome, DateHelper.format(m.getDate()), m.getUsuario()));
-        holder.mensagemTextView.setText(m.getTexto());
-        mensagemEditText.setText("");
+            holder.dataNomeTextView.setText(context.getString(R.string.data_nome, DateHelper.format(m.getDate()), m.getUsuario()));
+            holder.mensagemTextView.setText(m.getTexto());
+            mensagemEditText.setText("");
+        }
+        @Override
+        public int getItemCount() {
+            return this.mensagens.size();
+        }
     }
-    @Override
-    public int getItemCount() {
-        return this.mensagens.size();
-    }
-}
 }
