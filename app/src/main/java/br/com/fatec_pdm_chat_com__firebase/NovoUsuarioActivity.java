@@ -1,6 +1,8 @@
 package br.com.fatec_pdm_chat_com__firebase;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -32,6 +34,10 @@ public class NovoUsuarioActivity extends AppCompatActivity {
             Toast.makeText(this, getString(R.string.cadastro_falha), Toast.LENGTH_SHORT).show();
             finish();
         });
+    }
+
+    public void voltarLogin (View view){
+        startActivity(new Intent(this, MainActivity.class));
     }
 
 

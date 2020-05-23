@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">fatec_pdm_chat_com__firebase</string>
+    <string name="app_name">FateChat</string>
     <string name="dica_login">Digite seu login</string>
     <string name="dica_senha">Digite sua senha</string>
     <string name="quero_me_cadastrar">Quero me cadastrar</string>
@@ -8,6 +8,7 @@
     <string name="cadastro_sucesso">Cadastrado com sucesso !!!</string>
     <string name="cadastro_falha">Falha no cadastro</string>
     <string name="login_falhou">Falha no login</string>
+    <string name="btnVoltar">Voltar</string>
     <string name="login_sucesso" />
 
 </resources>

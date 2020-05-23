@@ -93,6 +93,7 @@ public class ChatActivity extends AppCompatActivity {
 
         mMsgsReference.addSnapshotListener((queryDocumentSnapshots, e) -> {
             mensagens.clear();
+
             for (DocumentSnapshot doc:
                     queryDocumentSnapshots.getDocuments()) {
                 Mensagem incomingMsg = doc.toObject(Mensagem.class);
@@ -134,6 +135,7 @@ class ChatViewHolder extends RecyclerView.ViewHolder{
 
     ChatViewHolder (View raiz){
         super(raiz);
+
         this.dataNomeTextView = raiz.findViewById(R.id.dataNomeTextView);
         this.mensagemTextView = raiz.findViewById(R.id.mensagemTextView);
     }
@@ -158,12 +160,17 @@ class ChatViewHolder extends RecyclerView.ViewHolder{
         @Override
         public void onBindViewHolder(@NonNull ChatViewHolder holder,
                                      int position) {
-            Mensagem m = mensagens.get(position);
 
-            holder.dataNomeTextView.setText(context.getString(R.string.data_nome, DateHelper.format(m.getDate()), m.getUsuario()));
-            holder.mensagemTextView.setText(m.getTexto());
-            mensagemEditText.setText("");
+            Mensagem m = mensagens.get(position);
+            if (m.getDate()!=null) {
+                holder.dataNomeTextView.setText(context.getString(R.string.data_nome, DateHelper.format(m.getDate()), m.getUsuario()));
+                holder.mensagemTextView.setText(m.getTexto());
+                mensagemEditText.setText("");
+
+            }
+
         }
+
         @Override
         public int getItemCount() {
             return this.mensagens.size();

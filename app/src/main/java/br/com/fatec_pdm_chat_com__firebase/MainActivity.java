@@ -2,9 +2,11 @@ package br.com.fatec_pdm_chat_com__firebase;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -41,10 +43,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void irParaCadastro (View view){
         startActivity(new Intent(this, NovoUsuarioActivity.class));
-        }
+    }
     public void fazerLogin (View view){
         String login = loginEditText.getText().toString();
         String senha = senhaEditText.getText().toString();
+        esconderTeclado(view);
 
         firebaseAuth.signInWithEmailAndPassword(
                 login,
@@ -63,6 +66,12 @@ public class MainActivity extends AppCompatActivity {
                     getString(R.string.login_falhou),
                     Toast.LENGTH_SHORT).show();
         });
+    }
+
+    private void esconderTeclado (View v){
+        InputMethodManager ims =
+                (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        ims.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 
 }

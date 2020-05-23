@@ -10,6 +10,12 @@
     >
 
 
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="match_parent"
+        android:layout_height="206dp"
+        app:srcCompat="@drawable/firechatbannertransparente" />
+
     <EditText
         android:id="@+id/loginEditText"
         android:layout_width="match_parent"
@@ -41,6 +47,7 @@
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="20dp"
         android:text="@android:string/ok"
+        android:textColor="@android:color/white"
         android:background="@color/colorPrimary"
         />
 
@@ -53,8 +60,6 @@
         android:background="@android:color/white"
         android:text="@string/quero_me_cadastrar"
         />
-
-
 
 
 </LinearLayout>

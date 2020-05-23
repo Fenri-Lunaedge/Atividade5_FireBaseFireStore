@@ -50,12 +50,10 @@ public class Temas extends AppCompatActivity {
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
         l1.setAdapter(adapter);
         list.add("Cinema");
-        list.add("Novidades");
-        list.add("Tecnologia");
         list.add("Economia");
         list.add("Futebol");
-
-
+        list.add("Novidades");
+        list.add("Tecnologia");
 
         l1.setOnItemClickListener((adapterView, view, i, l) -> {
 

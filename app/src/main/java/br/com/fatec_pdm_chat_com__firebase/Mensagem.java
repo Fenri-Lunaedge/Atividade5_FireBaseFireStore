@@ -1,5 +1,7 @@
 package br.com.fatec_pdm_chat_com__firebase;
 
+import android.os.RemoteException;
+
 import java.util.Collections;
 import java.util.Date;
 
@@ -8,8 +10,13 @@ public class Mensagem implements Comparable <Mensagem>{
     private Date date;
     private String texto;
 
-    public int compareTo(Mensagem o){
-        return this.date.compareTo(o.date);
+    public int compareTo(Mensagem o) throws NullPointerException {
+        if (o.getDate()!=null && !o.getTexto().equals("") && o.getTexto()!=null)
+            return this.date.compareTo(o.date);
+        else if (this.texto == null && o.texto.equals(""))
+            return o.date.compareTo(o.date);
+        else
+            return this.date.compareTo(this.date);
     }
 
 
@@ -29,7 +36,7 @@ public class Mensagem implements Comparable <Mensagem>{
         return date;
     }
 
-    public void setData(Date date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
